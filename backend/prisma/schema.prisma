@@ -1,0 +1,64 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("ADMIN")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String
+  slug      String    @unique
+  icon      String?
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id              String   @id @default(uuid())
+  name            String
+  description     String?
+  price           Float
+  discountPrice   Float?
+  taxIncluded     Boolean  @default(true)
+  stock           Int      @default(0)
+  isUnlimitedStock Boolean @default(false)
+  stockStatus     String   @default("IN_STOCK") // IN_STOCK, OUT_OF_STOCK, PENDING
+  status          String   @default("PUBLISHED") // PUBLISHED, DRAFT
+  categoryId      String?
+  category        Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  tags            String   @default("[]") // JSON string array
+  images          String   @default("[]") // JSON string array
+  colorSwatches   String   @default("[]") // JSON string array
+  featured        Boolean  @default(false)
+  salesCount      Int      @default(0)
+  orderCount      Int      @default(0)
+  rating          Float    @default(4.5)
+  expirationStart DateTime?
+  expirationEnd   DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Transaction {
+  id           String   @id @default(uuid())
+  orderId      String
+  customerName String
+  date         DateTime @default(now())
+  status       String   // Paid, Pending, Canceled
+  amount       Float
+  createdAt    DateTime @default(now())
+}
