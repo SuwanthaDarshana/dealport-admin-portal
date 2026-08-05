@@ -376,7 +376,7 @@ export default function AddProductPage() {
                 <div className="relative">
                   <select
                     value={stockStatus}
-                    onChange={(e) => setStockStatus(e.target.value)}
+                    onChange={(e) => setStockStatus(e.target.value as 'IN_STOCK' | 'OUT_OF_STOCK' | 'PENDING')}
                     className="w-full px-4 py-2.5 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 appearance-none outline-none"
                   >
                     <option value="IN_STOCK">In Stock</option>
