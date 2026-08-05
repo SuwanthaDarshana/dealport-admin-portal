@@ -32,7 +32,7 @@ export default function AddProductPage() {
   const [taxIncluded, setTaxIncluded] = useState(true);
   const [stock, setStock] = useState('Unlimited');
   const [isUnlimitedStock, setIsUnlimitedStock] = useState(true);
-  const [stockStatus, setStockStatus] = useState('IN_STOCK');
+  const [stockStatus, setStockStatus] = useState<'IN_STOCK' | 'OUT_OF_STOCK' | 'PENDING'>('IN_STOCK');
   const [categoryId, setCategoryId] = useState('');
   const [tag, setTag] = useState('Smartphone');
   const [featured, setFeatured] = useState(true);
