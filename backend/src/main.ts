@@ -5,12 +5,17 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Enable CORS for Next.js frontend
+  // Enable CORS dynamically for all origins (including Vercel deployments & localhost)
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, or Postman)
+      if (!origin) return callback(null, true);
+      return callback(null, origin);
+    },
     credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: 'Content-Type, Accept, Authorization',
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'X-Requested-With', 'Origin'],
+    optionsSuccessStatus: 204,
   });
 
   // Enable Global DTO Validation Pipe
@@ -26,8 +31,10 @@ async function bootstrap() {
   );
 
   const port = process.env.PORT || 4000;
-  await app.listen(port);
-  console.log(`🚀 DEALPORT Backend NestJS API running on http://localhost:${port}`);
+  // Bind explicitly to 0.0.0.0 for Docker & Render network interfaces
+  await app.listen(port, '0.0.0.0');
+  console.log(`🚀 DEALPORT Backend NestJS API running on port ${port}`);
 }
 
 bootstrap();
+
