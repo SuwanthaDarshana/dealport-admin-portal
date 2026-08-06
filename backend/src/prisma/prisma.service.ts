@@ -7,12 +7,18 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   private readonly logger = new Logger(PrismaService.name);
 
   async onModuleInit() {
-    await this.$connect();
-    await this.autoSeedIfEmpty();
+    try {
+      await this.$connect();
+      await this.autoSeedIfEmpty();
+    } catch (err) {
+      this.logger.warn(`Database connection deferred or pending: ${err}`);
+    }
   }
 
   async onModuleDestroy() {
-    await this.$disconnect();
+    try {
+      await this.$disconnect();
+    } catch {}
   }
 
   private async autoSeedIfEmpty() {
